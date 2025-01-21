@@ -3,13 +3,20 @@
  * Shows comprehensive information about the selected puppy, if there is one.
  * Also provides a button for users to remove the selected puppy from the roster.
  */
+// TODO: Grab data from the `getPuppy` query
+
+import { useDeletePuppyMutation, useGetPuppyQuery } from "./puppySlice";
+import { useDispatch } from "react-redux";
 export default function PuppyDetails({ selectedPuppyId, setSelectedPuppyId }) {
-  // TODO: Grab data from the `getPuppy` query
-
   // TODO: Use the `deletePuppy` mutation to remove a puppy when the button is clicked
-
+  const { data, isLoading } = useGetPuppyQuery(selectedPuppyId);
   function removePuppy(id) {
     setSelectedPuppyId();
+    const dispatch = useDispatch();
+
+    const handleDelete = () => {
+      dispatch(useDeletePuppyMutation(puppy.id));
+    };
   }
 
   // There are 3 possibilities:
@@ -27,15 +34,13 @@ export default function PuppyDetails({ selectedPuppyId, setSelectedPuppyId }) {
     $details = (
       <>
         <h3>
-          {puppy.name} #{puppy.id}
+          {data.name} #{data.id}
         </h3>
-        <p>{puppy.breed}</p>
-        <p>Team {puppy.team?.name ?? "Unassigned"}</p>
-        <button onClick={() => removePuppy(puppy.id)}>
-          Remove from roster
-        </button>
+        <p>{data.breed}</p>
+        <p>Team {data.team?.name ?? "Unassigned"}</p>
+        <button onClick={() => removePuppy(data.id)}>Remove from roster</button>
         <figure>
-          <img src={puppy.imageUrl} alt={puppy.name} />
+          <img src={data.imageUrl} alt={data.name} />
         </figure>
       </>
     );
@@ -44,7 +49,8 @@ export default function PuppyDetails({ selectedPuppyId, setSelectedPuppyId }) {
   return (
     <aside>
       <h2>Selected Puppy</h2>
-      {$details}
+
+      {data && $details}
     </aside>
   );
 }

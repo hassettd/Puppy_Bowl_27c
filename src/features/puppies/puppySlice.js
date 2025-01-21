@@ -1,5 +1,6 @@
-import api from "../../store/api";
-
+import { api } from "../../store/api";
+import { createSlice } from "@reduxjs/toolkit";
+import PuppyDetails from "./PuppyDetails";
 /*
 TODO: Define the following 4 endpoints:
   1. getPuppies (query)
@@ -15,7 +16,39 @@ functions for each endpoint.
 */
 
 const puppyApi = api.injectEndpoints({
-  endpoints: (build) => ({}),
+  endpoints: (builder) => ({
+    getPuppies: builder.query({
+      query: () => ({
+        url: "/",
+        method: "GET",
+      }),
+      providesTags: ["Puppy"],
+      transformResponse: (response, meta, arg) => response.data.players,
+    }),
+    getPuppy: builder.query({
+      query: (id) => ({
+        url: `/${id}`,
+        method: "GET",
+      }),
+      providesTags: ["Puppy"],
+      transformResponse: (response, meta, arg) => response.data.player,
+    }),
+    addPuppy: builder.mutation({
+      query: () => ({
+        url: "/",
+        method: "PUT",
+      }),
+      invalidatesTags: ["Puppy"],
+      transformResponse: (response, meta, arg) => response.data,
+    }),
+    deletePuppy: builder.mutation({
+      query: () => ({
+        url: "/",
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Puppy"],
+    }),
+  }),
 });
 
 export const {
@@ -24,3 +57,4 @@ export const {
   useAddPuppyMutation,
   useDeletePuppyMutation,
 } = puppyApi;
+export default puppyApi;
